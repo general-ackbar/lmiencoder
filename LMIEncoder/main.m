@@ -11,11 +11,12 @@
 
 typedef NS_ENUM(NSInteger, ColorSpace)
 {
-	legacy565 = 1,
+	legacy565 = 0,
     rgb888 = 24,
-	argb8888 = 32,
+	rgba8888 = 32,
     rgb565 = 16,
-	duo = 8
+	rgb332 = 8,
+    binary = 1
 };
 
 void printHelp(NSString *exe);
@@ -64,7 +65,7 @@ int main(int argc, char * argv[]) {
         
         NSString *inputFile;
         NSString *outputFile;
-        BOOL isRGB565 = false;
+        ColorSpace bitsPerColor = rgb565;
         int width = 0, height = 0, fps = 0;
         BOOL input_is_encoded = NO;
         BOOL append_to_file = NO;
@@ -72,7 +73,7 @@ int main(int argc, char * argv[]) {
 		BOOL output_is_c_header = NO;
         
         char c;
-        while ((c = getopt (argc, argv, "i:o:rhvacf:")) != -1)
+        while ((c = getopt (argc, argv, "i:o:b:hvacf:")) != -1)
             switch (c)
         {
             case 'i':
@@ -93,8 +94,8 @@ int main(int argc, char * argv[]) {
 			case 'h':
 				printHelp(@"lmiencoder");
 				return 0;
-			case 'r':
-                isRGB565 = YES;
+			case 'b':
+                bitsPerColor = atoi(optarg);
                 break;
             case 'a':
                 append_to_file = YES;
@@ -169,11 +170,11 @@ int main(int argc, char * argv[]) {
         //Construct header
         if(fps > 0)
         {
-            uint8_t header[10] =  {'L', 'M', 'I', (isRGB565 ? 0x10 : 0x20), 0x0A, (width >> 8) & 0xFF, width & 0xFF, (height >> 8) & 0xFF, height & 0xFF, fps & 0xFF};
+            uint8_t header[10] =  {'L', 'M', 'I', bitsPerColor & 0xFF, 0x0A, (width >> 8) & 0xFF, width & 0xFF, (height >> 8) & 0xFF, height & 0xFF, fps & 0xFF};
             [headerBytes appendBytes: &header length: sizeof(header)];
         } else
         {
-            uint8_t header[9] =  {'L', 'M', 'I', (isRGB565 ? 0x10 : 0x20), 0x09, (width >> 8) & 0xFF, width & 0xFF, (height >> 8) & 0xFF, height & 0xFF};
+            uint8_t header[9] =  {'L', 'M', 'I', bitsPerColor & 0xFF, 0x09, (width >> 8) & 0xFF, width & 0xFF, (height >> 8) & 0xFF, height & 0xFF};
             [headerBytes appendBytes: &header length: sizeof(header)];
 
         }
@@ -193,28 +194,85 @@ int main(int argc, char * argv[]) {
                 NSColor *color = [inputRep colorAtX:x y:y];
                 
                 //32-bit RGBA values
-                currentRedByte = lroundf([color redComponent] * 255);
-                currentGreenByte = lroundf([color greenComponent] * 255);
-                currentBlueByte = lroundf([color blueComponent] * 255);
-                currentAlphaByte = lroundf([color alphaComponent] * 255);
                 
-                //16-bit RGB values
-                c_rgb565 = (currentRedByte & 0b11111000) << 8;
-                c_rgb565 = c_rgb565 + ((currentGreenByte & 0b11111100) << 3);
-                c_rgb565 = c_rgb565 + ((currentBlueByte) >> 3);
-                c_rgb565 = (c_rgb565>>8) | ((c_rgb565 & 0xff) << 8); //Reverse order of bytes
+                if(color.colorSpace.colorSpaceModel == NSColorSpaceModelRGB)
+                {
+                    currentRedByte = lroundf([color redComponent] * 255);
+                    currentGreenByte = lroundf([color greenComponent] * 255);
+                    currentBlueByte = lroundf([color blueComponent] * 255);
+                    currentAlphaByte = lroundf([color alphaComponent] * 255);
+                } else if (color.colorSpace.colorSpaceModel == NSColorSpaceModelGray)
+                {
+                    currentRedByte = currentGreenByte = currentBlueByte = lroundf(color.whiteComponent * 255);
+                } else {
+                    NSLog(@"Input color space (%@) mot supported. Exiting.", color.description);
+                    return -1;
+                }
                 
                 //Append byte to array
-                if(isRGB565)
+                if(bitsPerColor == rgb565)
                 {
+                    //16-bit RGB values
+                    c_rgb565 = (currentRedByte & 0b11111000) << 8;
+                    c_rgb565 = c_rgb565 + ((currentGreenByte & 0b11111100) << 3);
+                    c_rgb565 = c_rgb565 + ((currentBlueByte) >> 3);
+                    c_rgb565 = (c_rgb565>>8) | ((c_rgb565 & 0xff) << 8); //Reverse order of bytes
+
                     [imageBytes appendBytes:&c_rgb565 length:sizeof(c_rgb565)];
                 }
-                else
+                else if(bitsPerColor == rgba8888)
                 {
                     [imageBytes appendBytes:&currentRedByte length:sizeof(currentRedByte)];
                     [imageBytes appendBytes:&currentGreenByte length:sizeof(currentGreenByte)];
                     [imageBytes appendBytes:&currentBlueByte length:sizeof(currentBlueByte)];
                     [imageBytes appendBytes:&currentAlphaByte length:sizeof(currentAlphaByte)];
+                }
+                else if(bitsPerColor == rgb888)
+                {
+                    [imageBytes appendBytes:&currentRedByte length:sizeof(currentRedByte)];
+                    [imageBytes appendBytes:&currentGreenByte length:sizeof(currentGreenByte)];
+                    [imageBytes appendBytes:&currentBlueByte length:sizeof(currentBlueByte)];
+                }
+                else if(bitsPerColor == rgb332)
+                {
+                    
+                    uint8_t red = (currentRedByte * 8) / 256;
+                    uint8_t green = (currentGreenByte * 8) / 256;
+                    uint8_t blue = (currentBlueByte * 4) / 256;
+                    
+                    uint8_t color = (red << 5) | (green << 2) | blue;
+                    //uint8_t color = (currentRedByte*6/256)*36 + (currentGreenByte*6/256)*6 + (currentBlueByte*6/256);
+                    [imageBytes appendBytes:&color length:sizeof(color)];
+                }
+                else if(bitsPerColor == binary)
+                {
+                    
+                    unsigned char currentByte = 0x00;
+                    for(int bit = 0; bit < 8; bit++) //Traverse the image 8 y-values for each x value
+                    {
+
+                        //Get current color in duo-tone
+                        color = [inputRep colorAtX:x+bit y:y];
+                        float gray = 0;
+                        if(color.colorSpace.colorSpaceModel == NSColorSpaceModelRGB)
+                            gray = roundf((0.2126 * color.redComponent) + (0.7152 * color.greenComponent) + (0.0722 * color.blueComponent));
+                        else if(color.colorSpace.colorSpaceModel == NSColorSpaceModelGray)
+                            gray = color.whiteComponent;
+                        
+                        
+                        //Build the byte value as binary (top pixel is the least significant bit)
+                        if(gray > 0.5)
+                        {
+                            currentByte |=  (1 << (7-bit));
+                        }
+                        
+                    //    x++;
+                    }
+                    x+=7;
+                    
+                    //Append byte to array
+                    [imageBytes appendBytes:&currentByte length:1];
+                    
                 }
             }
         }

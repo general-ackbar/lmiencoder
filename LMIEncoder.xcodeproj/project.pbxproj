@@ -23,7 +23,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8E0B4EB51FD80382004A17F7 /* LMIEncoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LMIEncoder; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E0B4EB51FD80382004A17F7 /* lmiencoder */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lmiencoder; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E0B4EB81FD80382004A17F7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -41,7 +41,7 @@
 		8E0B4EAC1FD80382004A17F7 = {
 			isa = PBXGroup;
 			children = (
-				8E0B4EB71FD80382004A17F7 /* LMIEncoder */,
+				8E0B4EB71FD80382004A17F7 /* lmiencoder */,
 				8E0B4EB61FD80382004A17F7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,25 +49,25 @@
 		8E0B4EB61FD80382004A17F7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8E0B4EB51FD80382004A17F7 /* LMIEncoder */,
+				8E0B4EB51FD80382004A17F7 /* lmiencoder */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8E0B4EB71FD80382004A17F7 /* LMIEncoder */ = {
+		8E0B4EB71FD80382004A17F7 /* lmiencoder */ = {
 			isa = PBXGroup;
 			children = (
 				8E0B4EB81FD80382004A17F7 /* main.m */,
 			);
-			path = LMIEncoder;
+			path = lmiencoder;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8E0B4EB41FD80382004A17F7 /* LMIEncoder */ = {
+		8E0B4EB41FD80382004A17F7 /* lmiencoder */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E0B4EBC1FD80382004A17F7 /* Build configuration list for PBXNativeTarget "LMIEncoder" */;
+			buildConfigurationList = 8E0B4EBC1FD80382004A17F7 /* Build configuration list for PBXNativeTarget "lmiencoder" */;
 			buildPhases = (
 				8E0B4EB11FD80382004A17F7 /* Sources */,
 				8E0B4EB21FD80382004A17F7 /* Frameworks */,
@@ -77,9 +77,9 @@
 			);
 			dependencies = (
 			);
-			name = LMIEncoder;
+			name = lmiencoder;
 			productName = LedMatrixImage;
-			productReference = 8E0B4EB51FD80382004A17F7 /* LMIEncoder */;
+			productReference = 8E0B4EB51FD80382004A17F7 /* lmiencoder */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -88,7 +88,7 @@
 		8E0B4EAD1FD80382004A17F7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = Codeninja;
 				TargetAttributes = {
 					8E0B4EB41FD80382004A17F7 = {
@@ -97,7 +97,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8E0B4EB01FD80382004A17F7 /* Build configuration list for PBXProject "LMIEncoder" */;
+			buildConfigurationList = 8E0B4EB01FD80382004A17F7 /* Build configuration list for PBXProject "lmiencoder" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -110,7 +110,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8E0B4EB41FD80382004A17F7 /* LMIEncoder */,
+				8E0B4EB41FD80382004A17F7 /* lmiencoder */,
 			);
 		};
 /* End PBXProject section */
@@ -161,6 +161,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -219,6 +220,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -241,7 +243,9 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = RM3F5X6445;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -251,7 +255,9 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = RM3F5X6445;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -259,7 +265,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8E0B4EB01FD80382004A17F7 /* Build configuration list for PBXProject "LMIEncoder" */ = {
+		8E0B4EB01FD80382004A17F7 /* Build configuration list for PBXProject "lmiencoder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8E0B4EBA1FD80382004A17F7 /* Debug */,
@@ -268,7 +274,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E0B4EBC1FD80382004A17F7 /* Build configuration list for PBXNativeTarget "LMIEncoder" */ = {
+		8E0B4EBC1FD80382004A17F7 /* Build configuration list for PBXNativeTarget "lmiencoder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8E0B4EBD1FD80382004A17F7 /* Debug */,
